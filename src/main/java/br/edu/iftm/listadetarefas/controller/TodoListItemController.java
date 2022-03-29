@@ -18,26 +18,27 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import br.edu.iftm.listadetarefas.domain.TodoList;
-import br.edu.iftm.listadetarefas.service.TodoListService;
+import br.edu.iftm.listadetarefas.domain.TodoListItem;
+import br.edu.iftm.listadetarefas.service.TodoListItemService;
 
 @RestController
-@RequestMapping("/todolist")
-class TodoListController {
+@RequestMapping("/todolist/{idList}/todolistitem")
+class TodoListItemController {
 
     @Autowired
-    TodoListService service;
+    TodoListItemService service;
 
     @GetMapping
-    public ResponseEntity<List<TodoList>> getAll() {
-        List<TodoList> items = service.GetAll();
+    public ResponseEntity<List<TodoListItem>> getAll(@PathVariable("idList") Integer id) {
+        List<TodoListItem> items = service.GetAll(id);
         if (items.isEmpty())
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         return ResponseEntity.status(HttpStatus.OK).body(items);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<TodoList> getById(@PathVariable("id") Integer id) {
-        Optional<TodoList> existingItemOptional = service.GetById(id);
+    public ResponseEntity<TodoListItem> getById(@PathVariable("id") Integer id) {
+        Optional<TodoListItem> existingItemOptional = service.GetById(id);
 
         if (existingItemOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(existingItemOptional.get());
@@ -47,16 +48,17 @@ class TodoListController {
     }
 
     @PostMapping
-    public ResponseEntity<TodoList> create(@RequestBody TodoList todoList) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(todoList));
+    public ResponseEntity<TodoListItem> create(@RequestBody TodoListItem todoListItem, 
+                @PathVariable("idList") Integer id) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(todoListItem, id));
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<TodoList> update(@PathVariable("id") Integer id,
-            @RequestBody TodoList item) {
-        TodoList todoList = service.update(item, id);
-        if (todoList != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(todoList);
+    public ResponseEntity<TodoListItem> update(@PathVariable("id") Integer id,
+            @RequestBody TodoListItem item, @PathVariable("idList") Integer idList) {
+        TodoListItem todoListItem = service.update(item, id, idList);
+        if (todoListItem != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(todoListItem);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
@@ -71,10 +73,4 @@ class TodoListController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso mão encontrado", exc);
         }
     }
-
-    @ExceptionHandler({ Exception.class })
-    public ResponseEntity<String> handleException() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("teste3");
-    }
-
 }
