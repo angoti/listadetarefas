@@ -70,7 +70,7 @@ class TodoListItemController {
             service.delete(id);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception exc) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso mão encontrado", exc);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 }

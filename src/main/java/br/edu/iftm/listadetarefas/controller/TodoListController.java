@@ -52,8 +52,7 @@ class TodoListController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<TodoList> update(@PathVariable("id") Integer id,
-            @RequestBody TodoList item) {
+    public ResponseEntity<TodoList> update(@PathVariable("id") Integer id, @RequestBody TodoList item) {
         TodoList todoList = service.update(item, id);
         if (todoList != null) {
             return ResponseEntity.status(HttpStatus.OK).body(todoList);
@@ -62,19 +61,26 @@ class TodoListController {
         }
     }
 
+    // @DeleteMapping("{id}")
+    // public ResponseEntity<HttpStatus> delete(@PathVariable("id") Integer id) {
+    // try {
+    // service.delete(id);
+    // return ResponseEntity.status(HttpStatus.OK).build();
+    // } catch (Exception exc) {
+    // throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso mão
+    // encontrado", exc);
+    // }
+    // }
+
     @DeleteMapping("{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") Integer id) {
-        try {
-            service.delete(id);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } catch (Exception exc) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Recurso mão encontrado", exc);
-        }
+        service.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @ExceptionHandler({ Exception.class })
-    public ResponseEntity<String> handleException() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("teste3");
-    }
+    // @ExceptionHandler({ Exception.class })
+    // public ResponseEntity<String> handleException() {
+    // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("teste3");
+    // }
 
 }
